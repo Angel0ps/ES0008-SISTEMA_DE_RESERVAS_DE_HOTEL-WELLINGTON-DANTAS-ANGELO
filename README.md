@@ -1,5 +1,5 @@
 # SISTEMA DE RESERVAS DE HOTEL POR WELLINGTON D. ANGELO
-Projeto individial da disciplina ES0008 -Programação Orientada a Objetos ministrada no semestre 2026.2
+Projeto individial da disciplina ES0008 - Programação Orientada a Objetos ministrada no semestre 2026.2
 
  ---
 ## Objetivo
@@ -13,17 +13,19 @@ app/
 ├── main.py
 │
 ├── models/
-│   ├── pessoas.py
-│   │   ├── Pessoa
+│   ├── Usuarios.py
+│   │   ├── Usuario
+│   │   ├── Funcionario
 │   │   └── Hospede
 │   │
 │   ├── quartos.py
 │   │   ├── Quarto
-│   │   ├── QuartoSimples
-│   │   ├── QuartoDuplo
-│   │   └── QuartoLuxo
+│   │   ├── Simples
+│   │   ├── Duplo
+│   │   └── Luxo
 │   │
 │   ├── registros.py
+│   │   ├── Registro
 │   │   ├── Reserva
 │   │   ├── Pagamento
 │   │   ├── Adicional
@@ -43,89 +45,143 @@ app/
 ---
 ## UML TEXTUAL
 
-```
-                         ┌──────────────────────┐
-                         │       Pessoa         │
-                         ├──────────────────────┤
-                         │ - nome: str          │
-                         │ - documento: str     │
-                         │ - email: str         │
-                         │ - telefone: str      │
-                         ├──────────────────────┤
-                         │- criar_reserva()     │
-                         │- cancel_reserva()    │
-                         └──────────△───────────┘
-                                    │
-                         ┌──────────┴──────────┐
-                         │                     │
-                      herança               herança
-                         │                     │
-              ┌──────────┴───────┐   ┌─────────┴─────────┐
-              │     Hospede      │   │    Funcionario    │
-              ├──────────────────┤   ├───────────────────┤
-              │ - nome: str      │   │ - nome: str       │
-              │ - documento: str │   │ - documento: str  │
-              │ - email: str     │   │ - email: str      │
-              │ - telefone: str  │   │ - telefone: str   │
-              ├──────────────────┤   │ - matricula: int  │
-              │ - reservas       │   │ - cargo: str      │
-              │   : list[Reserva]│   ├───────────────────┤
-              │- criar_reserva() │   │- criar_reserva()  │
-              │- cancel_reserva()│   │- cancel_reserva() │
-              └────────┬─────────┘   │- block_apto()     │
-                       │             │- reg_check-in()   │
-                       │             │- reg_check-out()  │
-                       │             │- reg_pagamento()  │
-                       │             │- reg_adicional()  │
-                       │             └─────────┬─────────┘
-                       │                       │
-                       │ 1                     │
-                       │                       │
-                       │ 0..*                  │
-                       ▼                       │
-              ┌──────────────────┐             │
-              │     Reserva      │◄────────────┤
-              ├──────────────────┤   gerencia/ │
-              │ - id             │   realiza operações
-              │ - data_entrada   │             │
-              │ - data_saida     │             │
-              │ - qtd_hospedes   │             │
-              │ - origem         │             │
-              │ - status         │             │
-              │ - pagamentos     │             │
-              │ - adicionais     │             │
-              └────────┬─────────┘             │
-                       │                       │
-             ┌─────────┴──────────┐            │
-             │                    │            │
-       composição            composição        │
-             │                    │            │
-             ▼                    ▼            │
-     ┌──────────────┐     ┌──────────────┐     │
-     │  Pagamento   │     │  Adicional   │     │
-     ├──────────────┤     ├──────────────┤     │
-     │ - data       │     │ - descricao  │     │
-     │ - forma      │     │ - valor      │     │
-     │ - valor      │     └──────────────┘     │
-     └──────────────┘                          │
-                                               │
-                                               │
-              ┌──────────────────┐             │
-              │      Quarto      │             │
-              ├──────────────────┤             │
-              │ - numero         │             │
-              │ - capacidade     │             │
-              │ - Diária         │             │
-              │ - status         │             │
-              │ - bloqueios      │ ◄───────────┤
-              └────────△─────────┘ Bloquear/Alterar Status
-                       │                       
-             ┌─────────┼──────────┐
-             │         │          │
-          herança   herança    herança
-             │         │          │
-             ▼         ▼          ▼
-       ┌──────────┐ ┌──────────┐ ┌──────────┐
-       │  Simples │ │  Duplo   │ │   Luxo   │
-       └──────────┘ └──────────┘ └──────────┘
-```
+```mermaid
+classDiagram
+
+%% Definição das Classes
+
+%% Super Classe Pessoas
+   class Pessoas{
+      -str nome
+      -str documento
+      -str email
+      -str telefone
+      -str id
+      +cadastrarPessoa() str
+   }
+
+   class Hospede{
+      -List reservas
+      +gerenciarHospedes() str
+      +requisitarHospede() str
+  }
+
+   class Funcionario{
+      -str cargo
+      +gerenciarFuncionario() str
+      +requisitarFuncionario() str
+   }
+
+   %% Super Classe Registro
+   class Registro{
+      -str id
+      -str origem
+      -char tipo
+      -char status
+      +novoRegistro() str
+   }
+
+   class Reserva{
+      -str id
+      -str origem
+      -char tipo
+      -char status
+      -str data_entrada
+      -str data_saida
+      -int qtd_hospedes
+      -list hospedes
+      -float adicionais
+      -list pagamentos
+      +confirmar()
+      +cancelarReserva() str
+      +checkIn()
+      +checkOut()
+      +pagamentoTotal() float
+   }
+
+   class Pagamento{
+      -str id
+      -char tipo
+      -str data
+      -char forma
+      -str reserva
+      -float valor
+      +registrarPagamento() str
+      +editarPagamento() str
+      +statusPagamento() char
+   }
+
+   class Adicional{
+      -str id
+      -str descricao
+      -str data
+      -float valor
+      +registrarAdicional() str
+      +editarAdicioal() str
+      +gerarDescricao() str
+   }
+
+   class Bloqueio{
+      -str id
+      -str origem
+      -char status
+      -char tipo
+      -str motivo
+      -str responsável
+      -str desbloqueio
+      +bloquearQuarto() str
+      +editarBloqueio() str
+      +agendarDesbloqueio() str
+   }
+
+   %% Super Classe Quarto
+   class Quarto{
+      -str numero
+      -int capacidade
+      -float diaria
+      -char status
+      -list bloqueios
+      -str observacoes
+      +requisitarQuarto() str
+   }
+
+   class Simples{
+      -str numero
+      -int capacidade
+      -float diaria
+      -char status
+      -list bloqueios
+      -str observacoes
+      +observacoesSimples() str
+   }
+
+   class Duplo{
+      -str numero
+      -int capacidade
+      -float diaria
+      -char status
+      -list bloqueios
+      -str observacoes
+      +observacoesDuplo() str
+   }
+
+   class Luxo{
+      -str numero
+      -int capacidade
+      -float diaria
+      -char status
+      -list bloqueios
+      -str observacoes
+      +observacoesLuxo() str
+   }
+
+   class Auditavel{
+      -str objeto_rastreado
+      -str id_do_objeto
+      -str criado_em
+      -str editado_em
+      -str criado_por
+      -str editado_por
+      +rastrearCriacao() str
+      +rastrearEdicao() str
+   }

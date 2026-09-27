@@ -13,8 +13,8 @@ app/
 ├── main.py
 │
 ├── models/
-│   ├── Usuarios.py
-│   │   ├── Usuario
+│   ├── pessoas.py
+│   │   ├── pessoa
 │   │   ├── Funcionario
 │   │   └── Hospede
 │   │
@@ -24,20 +24,21 @@ app/
 │   │   ├── Duplo
 │   │   └── Luxo
 │   │
-│   ├── registros.py
+│   ├── Registros.py
 │   │   ├── Registro
 │   │   ├── Reserva
 │   │   ├── Pagamento
 │   │   ├── Adicional
 │   │   └── Bloqueio
 │   │
-│   └── auditavel.py
+│   └── Rastreabilidade.py
 │       └── Rastreabilidade
 │
-├── services/
-│   └── relatorios.py
+├── Services/
+│   ├── relatorios.py
+│   └── tarifas.py
 │
-└── routes/
+└── Routes/
     ├── hospedes.py
     ├── quartos.py
     └── reservas.py
@@ -50,8 +51,9 @@ classDiagram
 
 %% Definição das Classes
 
-%% Super Classe Pessoas
-   class Pessoas{
+   %% ==================== Super Classe Pessoas ===================
+
+   class Pessoa <<abstract>> {
       -str nome
       -str documento
       -str email
@@ -60,49 +62,64 @@ classDiagram
       +cadastrarPessoa() str
    }
 
-   class Hospede{
-      -List reservas
+   class Hospede {
       +gerenciarHospedes() str
       +requisitarHospede() str
   }
 
-   class Funcionario{
+   class Funcionario {
       -str cargo
       +gerenciarFuncionario() str
       +requisitarFuncionario() str
    }
 
-   %% Super Classe Registro
-   class Registro{
+   %% ======= Heranças ========
+
+   Pessoa <|-- Hospede
+   Pessoa <|-- Funcionario
+
+   %% ====== Associações ======
+
+   Hospede "0..*" -- "0..*" Reserva : Realiza
+   Funcionario "1" --> "0..*" Bloqueio : Autoriza/Remove
+
+   %% ================= Classe para Rastreabilidade ===============
+
+      class Rastreabilidade {
+      -date criado_em
+      -date editado_em
+      -str criado_por
+      -str editado_por
+      +rastrearCriacao() str
+      +rastrearEdicao() str
+   }
+
+   %% =================== Super Classe Registro ===================
+   
+   class Registro {
       -str id
       -str origem
+      -date data
       -char tipo
       -char status
       +novoRegistro() str
    }
 
-   class Reserva{
-      -str id
-      -str origem
-      -char tipo
-      -char status
-      -str data_entrada
-      -str data_saida
+   class Reserva {
+      -date data_entrada
+      -date data_saida
       -int qtd_hospedes
-      -list hospedes
       -float adicionais
       -list pagamentos
       +confirmar()
       +cancelarReserva() str
       +checkIn()
       +checkOut()
-      +pagamentoTotal() float
+      +total_pago() float
+      +total_devido() float
    }
 
-   class Pagamento{
-      -str id
-      -char tipo
-      -str data
+   class Pagamento {
       -char forma
       -str reserva
       -float valor
@@ -111,31 +128,41 @@ classDiagram
       +statusPagamento() char
    }
 
-   class Adicional{
-      -str id
+   class Adicional {
       -str descricao
-      -str data
       -float valor
       +registrarAdicional() str
-      +editarAdicioal() str
-      +gerarDescricao() str
+      +editarAdicinoal() str
+      +gerenciarDescricao() str
    }
 
-   class Bloqueio{
-      -str id
-      -str origem
-      -char status
-      -char tipo
+   class Bloqueio {
+      -char tipo_de_bloqueio
       -str motivo
-      -str responsável
-      -str desbloqueio
+      -date prazo_para_desbloqueio
       +bloquearQuarto() str
       +editarBloqueio() str
-      +agendarDesbloqueio() str
+      +agendarDesbloqueio() date
    }
 
-   %% Super Classe Quarto
-   class Quarto{
+   %% ====== Heranças ======
+
+   Registro <|-- Reserva
+   Registro <|-- Bloqueio
+
+   %% == Herança Múltipla ==
+   Rastreabilidade <|-- Reserva
+   Rastreabilidade <|-- Pagamento
+   Rastreabilidade <|-- Bloqueio
+
+   %% ==== Composições ======
+
+   Reserva "1" *-- "0..*" Pagamento : Composição
+   Reserva "1" *-- "0..*" Adicional : Composição
+
+   %% ================= Super Classe Quarto ===============
+
+   class Quarto {
       -str numero
       -int capacidade
       -float diaria
@@ -145,43 +172,48 @@ classDiagram
       +requisitarQuarto() str
    }
 
-   class Simples{
-      -str numero
-      -int capacidade
-      -float diaria
-      -char status
-      -list bloqueios
-      -str observacoes
+   class Simples {
+      -str diferencial
+      +diferenciarSimples() str
       +observacoesSimples() str
    }
-
-   class Duplo{
-      -str numero
-      -int capacidade
-      -float diaria
-      -char status
-      -list bloqueios
-      -str observacoes
+   class Duplo {
+      -str diferencial
+      +diferenciarDuplo() str
       +observacoesDuplo() str
    }
-
-   class Luxo{
-      -str numero
-      -int capacidade
-      -float diaria
-      -char status
-      -list bloqueios
-      -str observacoes
+   class Luxo {
+      -str diferencial
       +observacoesLuxo() str
    }
 
-   class Auditavel{
-      -str objeto_rastreado
-      -str id_do_objeto
-      -str criado_em
-      -str editado_em
-      -str criado_por
-      -str editado_por
-      +rastrearCriacao() str
-      +rastrearEdicao() str
+   %% ======= Heranças =======
+
+   Quarto <|-- Simples
+   Quarto <|-- Duplo
+   Quarto <|-- Luxo
+
+   %% ====== Associações ======
+
+   Quarto "1" --> "0..*" Registro : Pode ser vinculado
+
+   %% ======================= Serviços ====================
+
+   class Tarifa {
+      -char tipo
+      +calcularDiaria() float
+      +aplicarDesconto() float
    }
+
+   class Relatorio {
+      -char tipo
+      +taxa_ocupacao() float
+      +adr() float
+      +revpar() float
+   }
+
+   %% ==== Relações ====
+
+   Reserva ..> Tarifa : Usa
+   Relatorio ..> Reserva : Lê
+   ```

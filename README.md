@@ -11,41 +11,31 @@ O projeto consiste em desenvolver uma API de um sistema de reservas de hotel. Es
 ```
 app/
 ├── main.py
-│
+├── database.py
+├── dependencies.py
 ├── models/
+│   ├── __init__.py
+│   ├── rastreios.py
 │   ├── pessoas.py
-│   │   ├── pessoa
-│   │   ├── Funcionario
-│   │   └── Hospede
-│   │
 │   ├── quartos.py
-│   │   ├── Quarto
-│   │   ├── Simples
-│   │   ├── Duplo
-│   │   └── Luxo
-│   │
-│   ├── Registros.py
-│   │   ├── Registro
-│   │   ├── Reserva
-│   │   ├── Pagamento
-│   │   ├── Adicional
-│   │   └── Bloqueio
-│   │
-│   └── Rastreabilidade.py
-│       └── Rastreabilidade
-│
-├── Services/
-│   ├── relatorios.py
-│   └── tarifas.py
-│
-└── Routes/
+│   └── registros.py
+├── schemas/
+│   ├── hospede.py
+│   ├── quarto.py
+│   └── reserva.py
+├── services/
+│   ├── tarifas.py
+│   └── relatorios.py
+└── routes/
     ├── hospedes.py
     ├── quartos.py
-    └── reservas.py
+    ├── reservas.py
+    └── bloqueios.py
+tests/
 ```
 ---
 ## UML TEXTUAL
-
+Código inicial com classes vazias e docstrings de propósito.
 ```mermaid
 classDiagram
 
@@ -53,7 +43,7 @@ classDiagram
 
    %% ==================== Super Classe Pessoas ===================
 
-   class Pessoa <<abstract>> {
+   class Pessoa <<abstrata>> {
       -str nome
       -str documento
       -str email
@@ -62,12 +52,12 @@ classDiagram
       +cadastrarPessoa() str
    }
 
-   class Hospede {
+   class Hospede <<concreta>> {
       +gerenciarHospedes() str
       +requisitarHospede() str
   }
 
-   class Funcionario {
+   class Funcionario <<concreta>> {
       -str cargo
       +gerenciarFuncionario() str
       +requisitarFuncionario() str
@@ -85,7 +75,7 @@ classDiagram
 
    %% ================= Classe para Rastreabilidade ===============
 
-      class Rastreabilidade {
+      class Rastreabilidade <<abstrata>> {
       -date criado_em
       -date editado_em
       -str criado_por
@@ -96,7 +86,7 @@ classDiagram
 
    %% =================== Super Classe Registro ===================
    
-   class Registro {
+   class Registro <<abstrata>> {
       -str id
       -str origem
       -date data
@@ -105,7 +95,7 @@ classDiagram
       +novoRegistro() str
    }
 
-   class Reserva {
+   class Reserva <<concreta>> {
       -date data_entrada
       -date data_saida
       -int qtd_hospedes
@@ -119,7 +109,7 @@ classDiagram
       +total_devido() float
    }
 
-   class Pagamento {
+   class Pagamento <<concreta>> {
       -char forma
       -str reserva
       -float valor
@@ -128,7 +118,7 @@ classDiagram
       +statusPagamento() char
    }
 
-   class Adicional {
+   class Adicional <<concreta>> {
       -str descricao
       -float valor
       +registrarAdicional() str
@@ -136,7 +126,7 @@ classDiagram
       +gerenciarDescricao() str
    }
 
-   class Bloqueio {
+   class Bloqueio <<concreta>> {
       -char tipo_de_bloqueio
       -str motivo
       -date prazo_para_desbloqueio
@@ -162,7 +152,7 @@ classDiagram
 
    %% ================= Super Classe Quarto ===============
 
-   class Quarto {
+   class Quarto <<abstrata>> {
       -str numero
       -int capacidade
       -float diaria
@@ -172,17 +162,17 @@ classDiagram
       +requisitarQuarto() str
    }
 
-   class Simples {
+   class Simples <<concreta>> {
       -str diferencial
       +diferenciarSimples() str
       +observacoesSimples() str
    }
-   class Duplo {
+   class Duplo <<concreta>> {
       -str diferencial
       +diferenciarDuplo() str
       +observacoesDuplo() str
    }
-   class Luxo {
+   class Luxo <<concreta>> {
       -str diferencial
       +observacoesLuxo() str
    }
@@ -199,13 +189,13 @@ classDiagram
 
    %% ======================= Serviços ====================
 
-   class Tarifa {
+   class Tarifa <<concreta>> {
       -char tipo
       +calcularDiaria() float
       +aplicarDesconto() float
    }
 
-   class Relatorio {
+   class Relatorio <<concreta>> {
       -char tipo
       +taxa_ocupacao() float
       +adr() float

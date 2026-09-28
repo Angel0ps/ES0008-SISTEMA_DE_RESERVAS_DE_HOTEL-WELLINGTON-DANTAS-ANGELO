@@ -35,7 +35,7 @@ tests/
 ```
 ---
 ## UML TEXTUAL
-Código inicial com classes vazias e docstrings de propósito.
+
 ```mermaid
 classDiagram
 

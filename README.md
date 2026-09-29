@@ -1,11 +1,12 @@
 # SISTEMA DE RESERVAS DE HOTEL POR WELLINGTON D. ANGELO
 Projeto individial da disciplina ES0008 - Programação Orientada a Objetos ministrada no semestre 2026.2
 
- ---
+---
 ## Objetivo
 O projeto consiste em desenvolver uma API de um sistema de reservas de hotel. Este permitirá acesso aos dados de hóspedes, quartos e reservas com check-in/check-out. Também devendo conter tratamentos para política de cancelamento, tarifas por temporada, bloqueios por manutenção e relatórios de desempenho.
 
-Além disto, buscarei aprender a utilizar as ferramentas FastAPI e SQlite para o desenvolvimento deste projeto. 
+Além disto, buscarei aprender a utilizar as ferramentas FastAPI e SQlite para o desenvolvimento deste projeto.
+
 ---
 
 ## Estrutura planejada de classes

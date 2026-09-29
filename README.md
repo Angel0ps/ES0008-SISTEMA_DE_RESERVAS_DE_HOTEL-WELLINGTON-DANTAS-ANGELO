@@ -34,7 +34,7 @@ app/
 tests/
 ```
 ---
-## UML TEXTUAL
+## UML Textual
 
 ```mermaid
 classDiagram
@@ -53,6 +53,8 @@ classDiagram
    }
 
    class Hospede <<concreta>> {
+      +str observacoes
+      +bool acessibilidade
       +gerenciarHospedes() str
       +requisitarHospede() str
   }

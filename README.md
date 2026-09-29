@@ -183,6 +183,7 @@ classDiagram
    }
    class Luxo <<concreta>> {
       -str diferencial
+      +diferenciarLuxo() str
       +observacoesLuxo() str
    }
 

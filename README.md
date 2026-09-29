@@ -34,8 +34,8 @@ app/
 tests/
 ```
 ---
-## UML TEXTUAL
-Código inicial com classes vazias e docstrings de propósito.
+## UML Textual
+
 ```mermaid
 classDiagram
 
@@ -53,6 +53,8 @@ classDiagram
    }
 
    class Hospede <<concreta>> {
+      +str observacoes
+      +bool acessecibilidade
       +gerenciarHospedes() str
       +requisitarHospede() str
   }
@@ -207,3 +209,4 @@ classDiagram
    Reserva ..> Tarifa : Usa
    Relatorio ..> Reserva : Lê
    ```
+   ---

@@ -5,6 +5,7 @@ Projeto individial da disciplina ES0008 - Programação Orientada a Objetos mini
 ## Objetivo
 O projeto consiste em desenvolver uma API de um sistema de reservas de hotel. Este permitirá acesso aos dados de hóspedes, quartos e reservas com check-in/check-out. Também devendo conter tratamentos para política de cancelamento, tarifas por temporada, bloqueios por manutenção e relatórios de desempenho.
 
+Além disto, buscarei aprender a utilizar as ferramentas FastAPI e SQlite para o desenvolvimento deste projeto. 
 ---
 
 ## Estrutura planejada de classes
@@ -30,7 +31,8 @@ app/
     ├── hospedes.py
     ├── quartos.py
     ├── reservas.py
-    └── bloqueios.py
+    ├── bloqueios.py
+    └── funcionarios.py
 tests/
 ```
 ---
@@ -90,7 +92,7 @@ classDiagram
    
    class Registro <<abstrata>> {
       -str id
-      -str origem
+      -str quarto_relacionado
       -date data
       -char tipo
       -char status
@@ -152,6 +154,10 @@ classDiagram
    Reserva "1" *-- "0..*" Pagamento : Composição
    Reserva "1" *-- "0..*" Adicional : Composição
 
+   %% ====== Associações ======
+
+   Registro "0..*" --> "1" Quarto : Associa-se com
+
    %% ================= Super Classe Quarto ===============
 
    class Quarto <<abstrata>> {
@@ -184,10 +190,6 @@ classDiagram
    Quarto <|-- Simples
    Quarto <|-- Duplo
    Quarto <|-- Luxo
-
-   %% ====== Associações ======
-
-   Quarto "1" --> "0..*" Registro : Pode ser vinculado
 
    %% ======================= Serviços ====================
 

@@ -1,0 +1,1 @@
+# Rota para gerenciar quartos na API

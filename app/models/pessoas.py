@@ -1,4 +1,4 @@
-# Super Classe Pessoa
+# Super Classe Pessoa como referencia para o armazenamento do banco de dados.
 
 class Pessoa():
     

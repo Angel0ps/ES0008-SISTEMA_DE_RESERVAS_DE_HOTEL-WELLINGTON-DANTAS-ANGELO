@@ -1,0 +1,1 @@
+# Vai servir para validar entradas de quartos na utilização da API.

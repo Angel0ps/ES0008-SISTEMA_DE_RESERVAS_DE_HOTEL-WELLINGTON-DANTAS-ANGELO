@@ -1,0 +1,1 @@
+# Vai servir para validar entradas de reservas na utilização da API.

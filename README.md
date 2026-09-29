@@ -54,7 +54,7 @@ classDiagram
 
    class Hospede <<concreta>> {
       +str observacoes
-      +bool acessecibilidade
+      +bool acessibilidade
       +gerenciarHospedes() str
       +requisitarHospede() str
   }
@@ -209,4 +209,3 @@ classDiagram
    Reserva ..> Tarifa : Usa
    Relatorio ..> Reserva : Lê
    ```
-   ---

@@ -1,13 +1,19 @@
-# Super Classe Registros
+# Super Classe Registros para referenciar o armazenamento no banco de dados.
 
 class Registro():
+
+    #Concentra os dados comuns a todos os registros.
+    # id, , origem, data e etc.
 
     pass
 
 
 class Reserva():
-    
-    # Registro de reserva de um quarto por um ou mais hóspedes.
+
+    # A classe central do sistema herda atributos de registro e rastreabilidade
+    # contem informações de data de entrada, saida, quarto reservado e etc.
+
+
 
     pass
 

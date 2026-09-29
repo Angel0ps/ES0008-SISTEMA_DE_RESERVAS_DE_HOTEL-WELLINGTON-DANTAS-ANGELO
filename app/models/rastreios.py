@@ -1,4 +1,4 @@
-# Classe para Rastreabilidade
+# Classe para Rastreabilidade como referencia para armazenamento no banco de dados.
 
 class Rastreabilidade():
     

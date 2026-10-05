@@ -1,39 +1,302 @@
-# Super Classe Registros para referenciar o armazenamento no banco de dados.
+from datetime import date
 
-class Registro():
+# ==================================================== Super Classe Registro ====================================================
+class Registro: # Concentra os dados comuns a todos os registros. Como id, , origem, data e etc.
 
-    #Concentra os dados comuns a todos os registros.
-    # id, , origem, data e etc.
+    def __init__(
+        self,
+        id: str,
+        quarto_relacionado: str,
+        data: date,
+        tipo: str,
+        status: str
+    ):
+        if type(self) is Registro:
+            raise TypeError(
+                "Registro é abstrata e não pode ser instanciada diretamente.\nUse Reserva ou Bloqueio."
+                )
 
-    pass
+        self.id = id
+        self.quarto_relacionado = quarto_relacionado
+        self.data = data
+        self.tipo = tipo
+        self.status = status
 
+     # ================= id =====================
 
-class Reserva():
+    @property
+    def id(self):
+        return self.__id
 
-    # A classe central do sistema herda atributos de registro e rastreabilidade
-    # contem informações de data de entrada, saida, quarto reservado e etc.
+    @id.setter
+    def id(self, valor: str):
+        if not valor or not str(valor).strip():
+            raise ValueError(
+                "id não pode ser vazio"
+                )
 
+        self.__id = str(valor).strip()
 
+    # =========== quarto relacionado ============
 
-    pass
+    @property
+    def quarto_relacionado(self):
+        return self.__quarto_relacionado
 
+    @quarto_relacionado.setter
+    def quarto_relacionado(self, valor: str):
+        if not valor or not str(valor).strip():
+            raise ValueError(
+                "Quarto relacionado não pode ser vazio"
+            )
 
+        self.__quarto_relacionado = str(valor).strip()
+
+    # =========== data ============
+
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, valor: date):
+        if not isinstance(valor, date):
+            raise ValueError(
+                "Data deve ser um objeto do tipo date"
+            )
+
+        self.__data = valor
+
+    # =========== tipo ============
+
+    @property
+    def tipo(self):
+        return self.__tipo
+
+    @tipo.setter
+    def tipo(self, valor: str):
+        if not valor or not str(valor).strip():
+            raise ValueError(
+                "Tipo não pode ser vazio"
+            )
+
+        self.__tipo = str(valor).strip()
+
+    # =========== status ============
+
+    @property
+    def status(self):
+        return self.__status
+
+    @status.setter
+    def status(self, valor: str):
+        if not valor or not str(valor).strip():
+            raise ValueError("Status não pode ser vazio")
+
+        self.__status = str(valor).strip()
+
+    # ================= Métodos Especiais =====================
+
+    def __str__(self):
+        return (
+            f"Registro: {self.id}\nQuarto: {self.quarto_relacionado} \n{self.status}"
+        )
+
+    def __repr__(self):
+        return (
+            f"{type(self).__name__}("
+            f"id={self.id!r},"
+            f"quarto_relacionado={self.quarto_relacionado!r}, "
+            f"data={self.data!r}, "
+            f"tipo={self.tipo!r}, "
+            f"status={self.status!r})"
+        )
+
+    def __eq__(self, outro: object) -> bool:
+        if not isinstance(outro, Registro):
+            return NotImplemented
+
+        return self.id == outro.id
+
+    def __hash__(self):
+        return hash(self.id)
+
+# =================================================================== subclasse Reserva =================================================================
+class Reserva(): # A classe central do sistema deve herdar atributos de registro e rastreabilidade. Contém data de entrada, saida, quarto reservado e etc.
+                 # Por enquanto, vamos irei fazer sem herdar a rastreabilidade.
+
+    def __init__( # Parâmetros da reserva
+        self,
+        id: str,
+        quarto_relacionado: str,
+        data: date,
+        tipo: str,
+        status: str,
+        data_entrada: date,
+        data_saida: date,
+        qtd_hospedes: int,
+        adicionais: float = 0.0,
+        pagamentos: list | None = None
+    ):
+        super().__init__( # Chama o construtor da classe pai Registro
+            id,
+            quarto_relacionado,
+            data,
+            tipo,
+            status
+        )
+
+        self.data_entrada = data_entrada
+        self.data_saida = data_saida
+        self.qtd_hospedes = qtd_hospedes
+        self.adicionais = adicionais
+        self.pagamentos = pagamentos if pagamentos is not None else []
+
+    # ========== data entrada ==========
+
+    @property
+    def data_entrada(self):
+        return self.__data_entrada
+
+    @data_entrada.setter
+    def data_entrada(self, valor: date) -> None:
+        if not isinstance(valor, date):
+            raise ValueError(
+                "Data de entrada deve ser um objeto do tipo date"
+            )
+
+        self.__data_entrada = valor
+
+     # ========== data saída ==========
+
+    @property
+    def data_saida(self):
+        return self.__data_saida
+
+    @data_saida.setter
+    def data_saida(self, valor: date) -> None:
+        if not isinstance(valor, date):
+            raise ValueError(
+                "Data de saída deve ser um objeto do tipo date"
+            )
+
+        if hasattr(self, "_Reserva__data_entrada"):
+            if valor <= self.__data_entrada:
+                raise ValueError(
+                    "Data de saída deve ser posterior à data de entrada"
+                )
+
+        self.__data_saida = valor
+
+    # ========== quantidade de hóspedes ==========
+
+    @property
+    def qtd_hospedes(self):
+        return self.__qtd_hospedes
+
+    @qtd_hospedes.setter
+    def qtd_hospedes(self, valor: int) -> None:
+        if not isinstance(valor, int) or isinstance(valor, bool):
+            raise ValueError(
+                "Quantidade de hóspedes deve ser um número inteiro"
+            )
+
+        if valor <= 0:
+            raise ValueError(
+                "Quantidade de hóspedes deve ser maior que zero"
+            )
+
+        self.__qtd_hospedes = valor
+
+    # ========== adicionais ==========
+
+    @property
+    def adicionais(self):
+        return self.__adicionais
+
+    @adicionais.setter
+    def adicionais(self, valor: float) -> None:
+        try:
+            valor = float(valor)
+        except (TypeError, ValueError):
+            raise ValueError(
+                "Adicionais deve ser um valor numérico"
+            )
+
+        if valor < 0:
+            raise ValueError(
+                "Adicionais não pode ser negativo"
+            )
+
+        self.__adicionais = valor
+
+    # ========== pagamentos ==========
+
+    @property
+    def pagamentos(self):
+        return self.__pagamentos
+
+    @pagamentos.setter
+    def pagamentos(self, valor: list):
+        if not isinstance(valor, list):
+            raise ValueError(
+                "Pagamentos deve ser uma lista"
+            )
+
+        self.__pagamentos = valor
+
+    # ========== métodos da reserva ==========
+
+    def confirmar(self):
+        self.status = "Confirmada"
+        return f"Reserva {self.id} confirmada."
+
+    def cancelarReserva(self) -> str:
+        self.status = "Cancelada"
+        return f"Reserva {self.id} cancelada."
+
+    def checkIn(self):
+        self.status = "Hospedado"
+        return f"Check-in da reserva {self.id} realizado."
+
+    def checkOut(self):
+        self.status = "Finalizada"
+        return f"Check-out da reserva {self.id} realizado."
+
+    def total_pago(self) -> float:
+        total = 0.0
+
+        for pagamento in self.pagamentos:
+            if hasattr(pagamento, "valor"):
+                total += pagamento.valor
+
+        return total
+
+    def total_devido(self, valor_reserva: float) -> float:
+        total = valor_reserva + self.adicionais
+
+        return max(0.0, total - self.total_pago())
+
+    # ========== método especial ==========
+
+    def __len__(self):
+        return (self.data_saida - self.data_entrada).days
+
+# ============================================================== composições e subclasses =================================================================
 class Pagamento():
 
     # Pagamento realizado para uma reserva.
     
     pass
-
-
 class Adicional():
     
     # Item ou serviço extra cobrado em uma reserva (ex: consumo de um frigobar, etc).
 
-    pass
-
-
+    pass 
 class Bloqueio():
 
     # Indisponibilização temporária de um quarto.
 
     pass
+
+# Definitivamente, tenho que modularizar isso

@@ -1,7 +1,10 @@
 from datetime import date
 
 # ==================================================== Super Classe Registro ====================================================
-class Registro: # Concentra os dados comuns a todos os registros. Como id, , origem, data e etc.
+class Registro: # Concentra os dados comuns a todos os registros. Como id, origem, data e etc.
+
+    TIPOS_VALIDOS = ("reserva", "bloqueio")
+    STATUS_VALIDOS = ("ativo", "cancelado", "finalizado")
 
     def __init__(
         self,
@@ -122,7 +125,7 @@ class Registro: # Concentra os dados comuns a todos os registros. Como id, , ori
         return hash(self.id)
 
 # =================================================================== subclasse Reserva =================================================================
-class Reserva(): # A classe central do sistema deve herdar atributos de registro e rastreabilidade. Contém data de entrada, saida, quarto reservado e etc.
+class Reserva(Registro): # A classe central do sistema deve herdar atributos de registro e rastreabilidade. Contém data de entrada, saida, quarto reservado e etc.
                  # Por enquanto, vamos irei fazer sem herdar a rastreabilidade.
 
     def __init__( # Parâmetros da reserva
